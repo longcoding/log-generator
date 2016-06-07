@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	uuid "github.com/satori/go.uuid"
 	"math/rand"
 	"time"
@@ -10,20 +9,38 @@ import (
 
 func GetLogLine() string {
 	rand.Seed(time.Now().UTC().UnixNano())
-	fmt.Println(createTimeStamp())
-	fmt.Println(createAssetId())
-	fmt.Println(createServiceId())
-	fmt.Println(createOpenApiId())
-	fmt.Println(createApplicationId())
-	fmt.Println(createClientIp())
-	fmt.Println(createLogDataSize())
-	return ""
+	return (createTimeStamp() + "||" +
+		createUUID() + "||" +
+		createAssetId() + "||" +
+		createServiceId() + "||" +
+		createOpenApiId() + "||" +
+		createApplicationId() + "||" +
+		createClientIp() + "||" +
+		createLogDataSize() + "||" +
+		createResponseCode() + "||" +
+		createResponseTime() + "||" +
+		createUserAgent() + "||" +
+		createApiStnCode())
 }
 
 func createTimeStamp() string {
 	var currentTime = time.Now()
-	currentTime.Date()
-	return strconv.Itoa(time.Now().Year())
+	var timeStamp string = strconv.Itoa(currentTime.Year())
+
+	standard := int(currentTime.Month())
+	timeStamp += AppendCharacter(standard) + AppendCharacter(currentTime.Day());
+	timeStamp += strconv.Itoa(currentTime.Hour()) + strconv.Itoa(currentTime.Minute()) +
+		strconv.Itoa(currentTime.Second()) + strconv.Itoa(currentTime.Nanosecond() / 1000000)
+	return timeStamp
+}
+
+func AppendCharacter(standard int) string {
+	var returnValue string
+	if standard < 10 {
+		returnValue = "0"
+	}
+	returnValue += strconv.Itoa(standard)
+	return returnValue
 }
 
 func createUUID() string {
@@ -107,21 +124,40 @@ func createLogDataSize() string {
 }
 
 func createResponseCode() string {
-	return ""
+	responseCode := []string{
+		"200-",
+		"401-3102",
+		"400-9401",
+		"403-9404",
+		"502-9504",
+	}
+	return responseCode[rand.Intn(len(responseCode))]
 }
 
 func createResponseTime() string {
-	return ""
+	return strconv.Itoa(rand.Intn(1000))
 }
 
 func createUserAgent() string {
-	return ""
+	userAgent := map[int]string{
+		0: "Nescape",
+		1: "Android",
+		2: "iOS",
+		3: "fireFox",
+	}
+	return userAgent[rand.Intn(len(userAgent))]
 }
 
 func createApiStnCode() string {
-	return ""
-}
-
-func createApplicationStnCode() string {
+	apiStnCode := map[int]string{
+		0: "0",
+		1: "1",
+	}
+	randomValue := rand.Intn(1)
+	for key, value := range apiStnCode {
+		if key == randomValue {
+			return value
+		}
+	}
 	return ""
 }
