@@ -27,7 +27,7 @@ func main() {
 
 	w := bufio.NewWriter(file)
 
-	mode := flag.String("mode", "realtime", "realtime or onetime")
+	mode := flag.String("mode", "", "realtime or onetime")
 	count := flag.Int("count", 0, "log line count")
 	flag.Parse()
 
@@ -40,7 +40,7 @@ func main() {
 			w.WriteString(GetLogLine() + "\n")
 		}
 		w.Flush()
-	} else {
+	} else if *mode == "realtime" {
 		for {
 			for i:=0; i < 10; i++ {
 				w.WriteString(GetLogLine() + "\n")
@@ -48,6 +48,8 @@ func main() {
 			w.Flush()
 			time.Sleep(1000 * time.Millisecond)
 		}
+	} else {
+		fmt.Println("mode is not defined")
 	}
 
 }
